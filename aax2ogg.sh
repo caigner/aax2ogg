@@ -1,14 +1,22 @@
 #!/bin/bash
 
 # Convert aax to oog
+#
+# This script converts aax-files to ogg-files.
+#
+# Parameter: <none> ... convert all aax-files in current directory
+# Parameter: <filename.aax> ... convert only filename.aax 
 
 FFMPEG=/usr/bin/ffmpeg
 FFPROBE=/usr/bin/ffprobe
-ACTIVATION_BYTES="a74be906"
+
+# next add your own activation-code 
+# You can extract it with the followin tool: https://github.com/inAudible-NG/audible-activator
+ACTIVATION_BYTES="xxxxxxxx"
 
 
 function convert {
-  
+    # extract some meta data from the input file 
 	TITLE=`$FFPROBE -show_format "$1" 2>/dev/null | grep TAG:title | cut -d '=' -f 2 | sed 's/:/ -/g'`
 	ARTIST=`$FFPROBE -show_format "$1" 2>/dev/null | grep TAG:artist | cut -d '=' -f 2`
 	
@@ -16,22 +24,22 @@ function convert {
 		mkdir "$ARTIST"
 	fi
 	
-	# skip convertion if file already exists
+    # skip convertion if file already exists
     if [[ ! -e "$ARTIST/$TITLE.ogg" ]]; then
-		echo "Converting $TITLE ..."
-		time $FFMPEG -v error -stats -activation_bytes $ACTIVATION_BYTES -i "$1" -vn -qscale:a 4 "$ARTIST/$TITLE".ogg -n
-	else
-		echo "File already exists!"
-	fi	
+        echo "Converting $TITLE ..."
+        time $FFMPEG -v error -stats -activation_bytes $ACTIVATION_BYTES -i "$1" -vn -qscale:a 4 "$ARTIST/$TITLE".ogg -n
+    else
+        echo "File already exists!"
+    fi
 }
 
 if [[ -z "$1" ]]; then
-	# kein Parameter, daher werden alle AAX-Dateien in MP4 umgewandelt
+	# if there is no parameter then convert all aax-files
 	for f in `find -type f -iname "*.aax"`
 	do
 		convert "$f"
 	done
 else
-	# eine Datei wurde angegeben, und die wird jetzt umgewandelt
+	# only convert one file
 	convert "$1"
 fi
