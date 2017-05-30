@@ -27,9 +27,9 @@ function convert {
     # skip convertion if file already exists
     if [[ ! -e "$ARTIST/$TITLE.ogg" ]]; then
         echo "Converting $TITLE ..."
-        time $FFMPEG -v error -stats -activation_bytes $ACTIVATION_BYTES -i "$1" -vn -qscale:a 4 "$ARTIST/$TITLE".ogg -n
+        time $FFMPEG -v error -stats -activation_bytes $ACTIVATION_BYTES -i "$1" -vn -qscale:a 4 "$ARTIST/$TITLE.ogg" -n
     else
-        echo "File already exists!"
+        echo "File "$ARTIST/$TITLE.ogg" already exists!"
     fi
 }
 
